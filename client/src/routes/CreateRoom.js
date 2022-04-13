@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { v1 as uuid } from "uuid";
+import React, { useEffect, useRef, useState } from "react";
+// import { v1 as uuid } from "uuid";
 import NavBar from "../components/NavBar";
 import style from "./CreateRoom.module.css";
 import videoCall from "../assets/outline_video_call_white_24dp.png";
@@ -8,10 +8,42 @@ import { Bounce, LightSpeed, Zoom } from "react-reveal";
 import RubberBand from "react-reveal/RubberBand";
 import axois from "axios";
 import linkIcon from "../assets/link.png";
-import { nanoid, customAlphabet } from "nanoid";
+import { customAlphabet } from "nanoid";
+import ReactTooltip from "react-tooltip";
 
 const CreateRoom = (props) => {
   const [link, setLink] = useState();
+  const [copyStatus, setCopyStatus] = useState("Copy");
+  const linkRef = useRef();
+  useEffect(async () => {
+    const id = customAlphabet("1234567890abcdef", 10)();
+    const long_url = `${window.location.href}room/${id}`;
+    axois
+      .post(
+        "https://api-ssl.bitly.com/v4/shorten",
+        {
+          domain: "bit.ly",
+          long_url,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.REACT_APP_BITLY_KEY}`,
+          },
+        }
+      )
+      .then((res) => {
+        //   console.log(res.data.link);
+        //   setLink(res.data.link);
+        //   setBtnMessage("Start Interview");
+        linkRef.current = res.data.link;
+      })
+      .catch((err) => {
+        console.log(err.response);
+        //   setLink(long_url);
+        //   setBtnMessage("Start Interview");
+        linkRef.current = long_url;
+      });
+  }, []);
 
   const [btnMessage, setBtnMessage] = useState("Create Room");
 
@@ -35,33 +67,39 @@ const CreateRoom = (props) => {
       //   })
       //     .then((res) => console.log(res))
       //     .catch((err) => console.log("errrr->", err));
-      const long_url = `${window.location.href}room/${id}`;
-      axois
-        .post(
-          "https://api-ssl.bitly.com/v4/shorten",
-          {
-            domain: "bit.ly",
-            long_url,
-          },
-          {
-            headers: {
-              // Authorization: "Bearer 15cfb8770c0abd7eba19a9b134eb8deb806dddc5",
-            },
-          }
-        )
-        .then((res) => {
-          console.log(res.data.link);
-          setLink(res.data.link);
-          setBtnMessage("Start Interview");
-        })
-        .catch((err) => {
-          console.log(err.response);
-          setLink(long_url);
-          setBtnMessage("Start Interview");
-        });
+      //   const long_url = `${window.location.href}room/${id}`;
+      //   axois
+      //     .post(
+      //       "https://api-ssl.bitly.com/v4/shorten",
+      //       {
+      //         domain: "bit.ly",
+      //         long_url,
+      //       },
+      //       {
+      //         headers: {
+      //           //   Authorization: `Bearer ${process.env.REACT_APP_BITLY_KEY}`,
+      //         },
+      //       }
+      //     )
+      //     .then((res) => {
+      //       console.log(res.data.link);
+      setLink(linkRef.current);
+      setBtnMessage("Start Interview");
+      //     })
+      //     .catch((err) => {
+      //       console.log(err.response);
+      //       setLink(long_url);
+      //       setBtnMessage("Start Interview");
+      //     });
       //   setLink(long_url);
     }
   }
+
+  const handleCopy = () => {
+    setCopyStatus("Copied");
+    navigator.clipboard.writeText(link);
+    setTimeout(async () => setCopyStatus("Copy"), 1000);
+  };
 
   return (
     <div className={style.container}>
@@ -102,7 +140,17 @@ const CreateRoom = (props) => {
                   <img src={linkIcon} alt="" className={style.linkIcon} />
                 </LightSpeed>
                 <LightSpeed right when={link !== undefined}>
-                  <span>{link}</span>
+                  <span onClick={handleCopy} data-tip data-for="React-tooltip">
+                    {link}
+                  </span>
+                  <ReactTooltip
+                    id="React-tooltip"
+                    place="top"
+                    type="dark"
+                    effect="solid"
+                  >
+                    {copyStatus}
+                  </ReactTooltip>
                 </LightSpeed>
               </div>
               <p className={style.info}>

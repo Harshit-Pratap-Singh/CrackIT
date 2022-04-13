@@ -40,6 +40,7 @@
     justify-content: space-evenly;
     color: white;
     border-radius: 20px;
+    cursor: pointer;
 }
 
 .videoIcon{
@@ -54,6 +55,8 @@
     display: flex;
     align-items: center;
     padding: 20px 0;
+    cursor: pointer;
+
 }
 
 .linkIcon{
@@ -61,6 +64,7 @@
 }
 .link>span{
     padding-left: 10px;
+    cursor: pointer;
 }
 
 .info{

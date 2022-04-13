@@ -389,6 +389,7 @@ const Room = (props) => {
         </div>
 
         <div className={`${style.messageContainer} ${chatFlag && style.enter}`}>
+          {/* <Zoom collapse delay={1} when={chatFlag} duration={100}> */}
           <div className={style.messageHeader}>
             <p className={style.chatHeading}>Chat</p>
             <img
@@ -398,6 +399,7 @@ const Room = (props) => {
               onClick={() => setChatFlag(!chatFlag)}
             />
           </div>
+          {/* </Zoom> */}
 
           <div className={style.chatMainContainer} id="abc">
             {/* <Message
@@ -413,28 +415,28 @@ const Room = (props) => {
               />
             ))}
           </div>
-          <Zoom collapse delay={1} when={chatFlag} duration={100}>
-            <div className={style.chatFooterContainer}>
-              <input
-                type="text"
-                className={style.chatInput}
-                placeholder="Send message"
-                onChange={handleChange}
-                value={text}
-                id="chatIn"
-                // onKeyDownCapture={sendMessage}
-              />
-              <img
-                src={sendIcon}
-                alt="send messsage"
-                className={`${style.btnSend} ${
-                  (text === "" || !peerJoined) && style.btnDisable
-                }`}
-                // className={style.btnSend}
-                onClick={sendMessage}
-              />
-            </div>
-          </Zoom>
+          {/* <Zoom collapse delay={1} when={chatFlag} duration={100}> */}
+          <div className={style.chatFooterContainer}>
+            <input
+              type="text"
+              className={style.chatInput}
+              placeholder="Send message"
+              onChange={handleChange}
+              value={text}
+              id="chatIn"
+              onKeyDownCapture={sendMessage}
+            />
+            <img
+              src={sendIcon}
+              alt="send messsage"
+              className={`${style.btnSend} ${
+                (text === "" || !peerJoined) && style.btnDisable
+              }`}
+              // className={style.btnSend}
+              onClick={sendMessage}
+            />
+          </div>
+          {/* </Zoom> */}
         </div>
       </div>
 
