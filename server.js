@@ -24,6 +24,7 @@ io.on("connection", (socket) => {
       }
     } else {
       rooms[roomID] = [socket.id];
+      // socket.to(socket.id).emit('myId',socket.id);
     }
   });
 
@@ -71,6 +72,13 @@ io.on("connection", (socket) => {
       .to(payload.target)
       .emit("sharescreen status", payload.screenShareFlag);
   });
+
+  // socket.on("disconnect", (reason) => {
+  //   socket.broadcast.emit("user disconnecting", { user: socket.id });
+  //   console.log("rooms--->", socket.rooms);
+  //   console.log("dis Id-->", socket.id);
+  //   console.log("disconnect==>", reason);
+  // });
 });
 
 if (process.env.PROD) {

@@ -111,10 +111,29 @@ const Room = (props) => {
             otherUser: otherUser.current,
           };
           socketRef.current.emit("leave room", obj);
-          window.location.href = "https://intense-dawn-13733.herokuapp.com/";
+          window.location.href = "https://crackit-hps.herokuapp.com/";
         });
 
         socketRef.current.on("room full", () => {});
+
+        ///new
+        // socketRef.current.on('myId',(data)=>{
+        //   myIdRef.current=data;
+        // })
+
+        // socketRef.current.on("user disconnecting", (data) => {
+        //   console.log("user disconnecting-->", data.user == otherUser.current);
+        //   if (otherUser.current === data.user) {
+        //     let obj = {
+        //       roomID: props.match.params.roomID,
+        //       otherUser: myIdRef.current,
+        //     };
+        //     socketRef.current.emit("leave room", obj);
+        //     // window.location.href = "https://crackit-hps.herokuapp.com/";
+        //   }
+        // });
+
+        ///*new
 
         //new
         // let screenShareButton = document.querySelector(
@@ -279,6 +298,7 @@ const Room = (props) => {
 
   function shareScreen() {
     // let screenShareButton = document.querySelector(`.${style.btnShareScreen}`);
+    if (!peerJoined) return;
     navigator.mediaDevices.getDisplayMedia({ cursor: true }).then((stream) => {
       const screenTrack = stream.getTracks()[0];
 
@@ -446,11 +466,9 @@ const Room = (props) => {
         </div>
         <div className={style.controlContainer}>
           <img
-            onClick={shareScreen}
-            className={`${style.btnShareScreen}  ${
-              screenShareFlag && style.red
-            }`}
-            src={screenShareOff}
+            onClick={mute}
+            className={`${style.btnMute} ${!muteFlag && style.red}`}
+            src={!muteFlag ? micOff : micOn}
           ></img>
           <img
             onClick={hideCamera}
@@ -458,10 +476,13 @@ const Room = (props) => {
             src={hideCameraFlag ? videoOn : videoOff}
           ></img>
           <img
-            onClick={mute}
-            className={`${style.btnMute} ${!muteFlag && style.red}`}
-            src={!muteFlag ? micOff : micOn}
+            onClick={shareScreen}
+            className={`${style.btnShareScreen}  ${
+              screenShareFlag && style.red
+            } ${!peerJoined && style.btnDisable}`}
+            src={screenShareOff}
           ></img>
+
           <img
             id="leaveButton"
             className={style.btnLeaveCall}

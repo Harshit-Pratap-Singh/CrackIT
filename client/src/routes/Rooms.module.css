@@ -103,10 +103,6 @@
     border: none;
 }
 
-.btnDisable{
-    opacity: .5;
-    cursor:not-allowed;
-}
 
 
 .userVideo,.peerVideo{
@@ -201,3 +197,7 @@
 
 /* 0	209	186	 */
 /* #4dcfbc */
+.btnDisable{
+    opacity: .5;
+    cursor:not-allowed;
+}
