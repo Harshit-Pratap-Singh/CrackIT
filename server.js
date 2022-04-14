@@ -39,14 +39,17 @@ io.on("connection", (socket) => {
     console.log("otherUser is: ", otherUser);
 
     if (rooms[roomID].length === 2) {
+      delete idRoomMap[socket.id];
       var filtered = rooms[roomID].filter(function (value, index, arr) {
         return value !== socket.id;
+
       });
       rooms[roomID] = filtered;
 
       console.log("rooms is: ", rooms);
       socket.to(otherUser).emit("user left");
     } else if (rooms[roomID].length === 1) {
+      delete idRoomMap[socket.id];
       var filtered = rooms[roomID].filter(function (value, index, arr) {
         return value !== socket.id;
       });
@@ -86,7 +89,7 @@ io.on("connection", (socket) => {
 
     let other;
 
-    if (idRoomMap[socket.id] && rooms[idRoomMap[socket.id]]) {
+    if (idRoomMap[socket.id]) {
       if (rooms[idRoomMap[socket.id]].length === 1) {
         console.log("rooms---> 2-->", rooms[idRoomMap[socket.id]]);
         delete rooms[idRoomMap[socket.id]];
@@ -97,11 +100,12 @@ io.on("connection", (socket) => {
         rooms[idRoomMap[socket.id]] = [other];
         socket.to(other).emit("user left");
       }
-    }
     console.log("other  Id-->", other);
     console.log("disconnect==>", rooms);
     console.log("rooms[idRoomMap[socket.id]]==>", rooms[idRoomMap[socket.id]]);
     delete idRoomMap[socket.id];
+  }
+
   });
 });
 
