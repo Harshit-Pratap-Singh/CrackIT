@@ -22,7 +22,8 @@ import sendIcon from "../assets/send-message.png";
 import Time from "../components/Time";
 import IdeMain from "../ide_components/IdeMain";
 
-import { Slide, Zoom } from "react-reveal";
+import { Slide } from "react-reveal";
+import Jump from "react-reveal/Jump";
 import Message from "../components/Message";
 
 const Room = (props) => {
@@ -55,6 +56,7 @@ const Room = (props) => {
 
   const [ideFlag, setIdeFlag] = useState(!true);
   const [chatFlag, setChatFlag] = useState(!true);
+  const [newMessageFlag, setNewMessageFlag] = useState(false);
 
   useEffect(() => {
     navigator.mediaDevices
@@ -185,6 +187,9 @@ const Room = (props) => {
   function handleReceiveMessage(e) {
     const now = new Date();
     const time = date.format(now, "hh:mm A");
+
+    if (!chatFlag) setNewMessageFlag(true);
+
     setMessages((messages) => [
       ...messages,
       { isMy: false, value: e.data, time },
@@ -358,21 +363,29 @@ const Room = (props) => {
     setMuteFlag(!muteFlag);
   }
 
-  function renderMessage(message, index) {
-    if (message.yours) {
-      return (
-        <div key={index}>
-          <p>{message.value}</p>
-        </div>
-      );
-    }
+  // function renderMessage(message, index) {
+  //   if (message.yours) {
+  //     return (
+  //       <div key={index}>
+  //         <p>{message.value}</p>
+  //       </div>
+  //     );
+  //   }
 
-    return (
-      <div key={index}>
-        <p>{message.value}</p>
-      </div>
-    );
-  }
+  //   return (
+  //     <div key={index}>
+  //       <p>{message.value}</p>
+  //     </div>
+  //   );
+  // }
+
+  const handelChat = () => {
+    if (!chatFlag) setNewMessageFlag(false);
+
+    setChatFlag(!chatFlag);
+    const el = document.getElementById("chatIn");
+    el.focus();
+  };
 
   return (
     <div className={style.container}>
@@ -491,16 +504,14 @@ const Room = (props) => {
         </div>
 
         <div className={style.rightPartFooter}>
-          <img
-            src={chatIcon}
-            alt="chat"
-            className={style.btnChat}
-            onClick={() => {
-              setChatFlag(!chatFlag);
-              const el = document.getElementById("chatIn");
-              el.focus();
-            }}
-          />
+          <Jump duration={1500} forever={newMessageFlag} when={newMessageFlag}>
+            <img
+              src={chatIcon}
+              alt="chat"
+              className={`${style.btnChat} ${chatFlag && style.changeBtnIde}`}
+              onClick={handelChat}
+            />
+          </Jump>
           <img
             src={!ideFlag ? ideIcon : ideIconWhite}
             alt="ide"
