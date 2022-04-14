@@ -8,6 +8,7 @@ const io = socket(server);
 const path = require("path");
 
 let rooms = {};
+let idRoomMap = {};
 
 io.on("connection", (socket) => {
   socket.on("join room", (roomID) => {
@@ -15,6 +16,7 @@ io.on("connection", (socket) => {
       if (rooms[roomID].length >= 2) {
         socket.emit("room full");
       } else {
+        idRoomMap[socket.id] = roomID;
         rooms[roomID].push(socket.id);
         const otherUser = rooms[roomID].find((id) => id !== socket.id);
         if (otherUser) {
@@ -24,6 +26,7 @@ io.on("connection", (socket) => {
       }
     } else {
       rooms[roomID] = [socket.id];
+      idRoomMap[socket.id] = roomID;
       // socket.to(socket.id).emit('myId',socket.id);
     }
   });
@@ -73,12 +76,25 @@ io.on("connection", (socket) => {
       .emit("sharescreen status", payload.screenShareFlag);
   });
 
-  // socket.on("disconnect", (reason) => {
-  //   socket.broadcast.emit("user disconnecting", { user: socket.id });
-  //   console.log("rooms--->", socket.rooms);
-  //   console.log("dis Id-->", socket.id);
-  //   console.log("disconnect==>", reason);
-  // });
+  socket.on("disconnect", (reason) => {
+    socket.broadcast.emit("user disconnecting", socket.id);
+    console.log("rooms--->", idRoomMap[socket.id]);
+    let other;
+    if (rooms[idRoomMap[socket.id]].length === 1) {
+      delete rooms[idRoomMap[socket.id]];
+    } else {
+      if (rooms[idRoomMap[socket.id]][0] == socket.id)
+        other = rooms[idRoomMap[socket.id]][1];
+      else other = rooms[idRoomMap[socket.id]][0];
+      rooms[idRoomMap[socket.id]] = [other];
+      socket.to(other).emit("user left");
+    }
+
+    console.log("other  Id-->", other);
+    console.log("disconnect==>", rooms);
+    console.log("rooms[idRoomMap[socket.id]]==>", rooms[idRoomMap[socket.id]]);
+    delete idRoomMap[socket.id];
+  });
 });
 
 if (process.env.PROD) {
