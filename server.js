@@ -27,8 +27,11 @@ io.on("connection", (socket) => {
     } else {
       rooms[roomID] = [socket.id];
       idRoomMap[socket.id] = roomID;
+
       // socket.to(socket.id).emit('myId',socket.id);
     }
+    console.log("user join-->", rooms);
+    console.log("user join map-->", idRoomMap[socket.id]);
   });
 
   socket.on("leave room", ({ roomID, otherUser }) => {
@@ -76,20 +79,25 @@ io.on("connection", (socket) => {
       .emit("sharescreen status", payload.screenShareFlag);
   });
 
-  socket.on("disconnect", (reason) => {
-    socket.broadcast.emit("user disconnecting", socket.id);
+  socket.on("disconnect", () => {
+    console.log("disconnect user id --->", socket.id);
     console.log("rooms--->", idRoomMap[socket.id]);
-    let other;
-    if (rooms[idRoomMap[socket.id]].length === 1) {
-      delete rooms[idRoomMap[socket.id]];
-    } else {
-      if (rooms[idRoomMap[socket.id]][0] == socket.id)
-        other = rooms[idRoomMap[socket.id]][1];
-      else other = rooms[idRoomMap[socket.id]][0];
-      rooms[idRoomMap[socket.id]] = [other];
-      socket.to(other).emit("user left");
-    }
+    console.log("rooms all--->", rooms);
 
+    let other;
+
+    if (idRoomMap[socket.id] && rooms[idRoomMap[socket.id]]) {
+      if (rooms[idRoomMap[socket.id]].length === 1) {
+        console.log("rooms---> 2-->", rooms[idRoomMap[socket.id]]);
+        delete rooms[idRoomMap[socket.id]];
+      } else if (rooms[idRoomMap[socket.id]].length === 2) {
+        if (rooms[idRoomMap[socket.id]][0] == socket.id)
+          other = rooms[idRoomMap[socket.id]][1];
+        else other = rooms[idRoomMap[socket.id]][0];
+        rooms[idRoomMap[socket.id]] = [other];
+        socket.to(other).emit("user left");
+      }
+    }
     console.log("other  Id-->", other);
     console.log("disconnect==>", rooms);
     console.log("rooms[idRoomMap[socket.id]]==>", rooms[idRoomMap[socket.id]]);
