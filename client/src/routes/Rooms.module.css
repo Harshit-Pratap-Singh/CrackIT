@@ -201,3 +201,7 @@
     opacity: .5;
     cursor:not-allowed;
 }
+
+.onMessage{
+    background-color: #30AADD;
+}

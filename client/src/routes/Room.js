@@ -56,6 +56,8 @@ const Room = (props) => {
 
   const [ideFlag, setIdeFlag] = useState(!true);
   const [chatFlag, setChatFlag] = useState(!true);
+  const chatFlagRef = useRef();
+  chatFlagRef.current = false;
   const [newMessageFlag, setNewMessageFlag] = useState(false);
 
   useEffect(() => {
@@ -188,7 +190,11 @@ const Room = (props) => {
     const now = new Date();
     const time = date.format(now, "hh:mm A");
 
-    if (!chatFlag) setNewMessageFlag(true);
+    // console.log("h chat-->", chatFlag);
+    // console.log("h new-->", newMessageFlag);
+    // console.log("chatFlagRef--->", chatFlagRef.current);
+
+    // if (!chatFlagRef.current) setNewMessageFlag(true);
 
     setMessages((messages) => [
       ...messages,
@@ -380,12 +386,25 @@ const Room = (props) => {
   // }
 
   const handelChat = () => {
-    if (!chatFlag) setNewMessageFlag(false);
+    setNewMessageFlag(false);
+    console.log("chatFlag-->", chatFlag);
+    console.log("new message--->", newMessageFlag);
 
     setChatFlag(!chatFlag);
-    const el = document.getElementById("chatIn");
-    el.focus();
+    chatFlagRef.current = !chatFlagRef.current;
+    console.log("chatFlagRef-->", chatFlagRef.current);
+
+    if (!chatFlag) {
+      const el = document.getElementById("chatIn");
+      el.focus();
+    }
   };
+
+  useEffect(() => {
+    if (messages && messages.length > 0) {
+      if (!messages.at(-1).isMy && !chatFlag) setNewMessageFlag(true);
+    }
+  }, [messages]);
 
   return (
     <div className={style.container}>
@@ -422,7 +441,6 @@ const Room = (props) => {
         </div>
 
         <div className={`${style.messageContainer} ${chatFlag && style.enter}`}>
-          {/* <Zoom collapse delay={1} when={chatFlag} duration={100}> */}
           <div className={style.messageHeader}>
             <p className={style.chatHeading}>Chat</p>
             <img
@@ -432,19 +450,14 @@ const Room = (props) => {
               onClick={() => setChatFlag(!chatFlag)}
             />
           </div>
-          {/* </Zoom> */}
 
           <div className={style.chatMainContainer} id="abc">
-            {/* <Message
-              isMy={true}
-              message="jkhskdhfhs sdhjfhjksd jshjkfd sjdklfjsdl "
-              time="lodu"
-            /> */}
-            {[...messages].reverse().map((message) => (
+            {[...messages].reverse().map((message, index) => (
               <Message
                 isMy={message.isMy}
                 message={message.value}
                 time={message.time}
+                key={index}
               />
             ))}
           </div>
@@ -508,7 +521,9 @@ const Room = (props) => {
             <img
               src={chatIcon}
               alt="chat"
-              className={`${style.btnChat} ${chatFlag && style.changeBtnIde}`}
+              className={`${style.btnChat} ${chatFlag && style.changeBtnIde} ${
+                !chatFlag && newMessageFlag && style.onMessage
+              }`}
               onClick={handelChat}
             />
           </Jump>
