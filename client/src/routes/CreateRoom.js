@@ -148,6 +148,7 @@ const CreateRoom = (props) => {
                     place="top"
                     type="dark"
                     effect="solid"
+                    backgroundColor="#36393a"
                   >
                     {copyStatus}
                   </ReactTooltip>
