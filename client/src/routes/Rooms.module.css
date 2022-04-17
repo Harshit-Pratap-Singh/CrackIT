@@ -115,6 +115,7 @@
 }
 .userVideo{
     transform: rotateY(180deg);
+    transition: all 1s;
 }
 
 .changePeerVideo{
@@ -122,6 +123,7 @@
 }
 
 .changeUserVideo{
+   
     width: 20%;
     height: 25%;
     z-index: 1;
