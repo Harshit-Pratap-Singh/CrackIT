@@ -115,6 +115,9 @@
 }
 .userVideo{
     transform: rotateY(180deg);
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
     transition: all 1s;
 }
 

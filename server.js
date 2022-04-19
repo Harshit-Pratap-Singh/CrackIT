@@ -38,11 +38,10 @@ io.on("connection", (socket) => {
     console.log("roomID is: ", roomID);
     console.log("otherUser is: ", otherUser);
 
-    if (rooms[roomID].length === 2) {
+    if (rooms[roomID] && rooms[roomID].length === 2) {
       delete idRoomMap[socket.id];
       var filtered = rooms[roomID].filter(function (value, index, arr) {
         return value !== socket.id;
-
       });
       rooms[roomID] = filtered;
 
@@ -100,12 +99,14 @@ io.on("connection", (socket) => {
         rooms[idRoomMap[socket.id]] = [other];
         socket.to(other).emit("user left");
       }
-    console.log("other  Id-->", other);
-    console.log("disconnect==>", rooms);
-    console.log("rooms[idRoomMap[socket.id]]==>", rooms[idRoomMap[socket.id]]);
-    delete idRoomMap[socket.id];
-  }
-
+      console.log("other  Id-->", other);
+      console.log("disconnect==>", rooms);
+      console.log(
+        "rooms[idRoomMap[socket.id]]==>",
+        rooms[idRoomMap[socket.id]]
+      );
+      delete idRoomMap[socket.id];
+    }
   });
 });
 
