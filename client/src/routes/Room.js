@@ -316,14 +316,14 @@ const Room = (props) => {
       console.log("senders.current is: ", senders.current);
       setScreenShareFlag(true);
       screenShareFlagRef.current = true;
-      document.dispatchEvent(event.current);
+      document.dispatchEvent(event.current);   // trigger 'screen share event for peer '
       senders.current
         .find((sender) => sender.track.kind === "video")
         .replaceTrack(screenTrack);
       screenTrack.onended = function () {
         setScreenShareFlag(!true);
         screenShareFlagRef.current = !true;
-        document.dispatchEvent(event.current);
+        document.dispatchEvent(event.current);  // trigger 'screen share event for peer '
         senders.current
           .find((sender) => sender.track.kind === "video")
           .replaceTrack(userStream.current.getTracks()[1]);
