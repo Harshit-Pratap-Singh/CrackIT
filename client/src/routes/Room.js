@@ -309,7 +309,7 @@ const Room = (props) => {
 
   function shareScreen() {
     // let screenShareButton = document.querySelector(`.${style.btnShareScreen}`);
-    if (!peerJoined) return;
+    if (!peerJoined || (screenShareFlag)) return;
     navigator.mediaDevices.getDisplayMedia({ cursor: true }).then((stream) => {
       const screenTrack = stream.getTracks()[0];
 

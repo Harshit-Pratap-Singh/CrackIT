@@ -15,7 +15,7 @@ const CreateRoom = (props) => {
   const [link, setLink] = useState();
   const [copyStatus, setCopyStatus] = useState("Copy");
   const linkRef = useRef();
-  useEffect(async () => {
+  useEffect(() => {
     const id = customAlphabet("1234567890abcdef", 10)();
     const long_url = `${window.location.href}room/${id}`;
     axois
