@@ -8,11 +8,11 @@ function EndPage() {
   console.log(roomID);
 
   const handleRejoin = () => {
-    window.location.href = `https://localhost:3000/room/${roomID}`;
+    window.location.href = `https://crackit-hps.herokuapp.com/room/${roomID}`;
   };
 
   const handleHome = () => {
-    window.location.href = "https://localhost:3000/";
+    window.location.href = "https://crackit-hps.herokuapp.com/";
   };
 
   return (

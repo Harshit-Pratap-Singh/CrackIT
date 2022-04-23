@@ -115,7 +115,7 @@ const Room = (props) => {
             otherUser: otherUser.current,
           };
           socketRef.current.emit("leave room", obj);
-          window.location.href = `https://localhost:3000/end/${props.match.params.roomID}`;
+          window.location.href = `https://crackit-hps.herokuapp.com/end/${props.match.params.roomID}`;
         });
 
         socketRef.current.on("room full", () => {});
