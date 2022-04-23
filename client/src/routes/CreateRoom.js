@@ -10,14 +10,17 @@ import axois from "axios";
 import linkIcon from "../assets/link.png";
 import { customAlphabet } from "nanoid";
 import ReactTooltip from "react-tooltip";
+import { useHistory } from "react-router-dom";
 
 const CreateRoom = (props) => {
   const [link, setLink] = useState();
   const [copyStatus, setCopyStatus] = useState("Copy");
   const linkRef = useRef();
+  const history = useHistory();
   useEffect(() => {
     const id = customAlphabet("1234567890abcdef", 10)();
     const long_url = `${window.location.href}room/${id}`;
+    // const long_url = `/room/${id}`;
     axois
       .post(
         "https://api-ssl.bitly.com/v4/shorten",
@@ -36,12 +39,14 @@ const CreateRoom = (props) => {
         //   setLink(res.data.link);
         //   setBtnMessage("Start Interview");
         linkRef.current = res.data.link;
+        // props.setMeetingLink(res.data.link);
       })
       .catch((err) => {
         console.log(err.response);
         //   setLink(long_url);
         //   setBtnMessage("Start Interview");
         linkRef.current = long_url;
+        // props.setMeetingLink(long_url);
       });
   }, []);
 
@@ -50,8 +55,9 @@ const CreateRoom = (props) => {
   function create() {
     if (link) {
       window.location.href = link;
+      // history.push(link);
     } else {
-      const id = customAlphabet("1234567890abcdef", 10)();
+      // const id = customAlphabet("1234567890abcdef", 10)();
 
       //   fetch("https://api-ssl.bitly.com/v4/shorten", {
       //     method: "POST",

@@ -83,7 +83,7 @@ const Room = (props) => {
 
         socketRef.current.on("room full", () => {
           setFull(!full);
-          window.location.href = "https://intense-dawn-13733.herokuapp.com/";
+          window.location.href = "https://crackit-hps.herokuapp.com/";
         });
 
         socketRef.current.on("offer", handleRecieveCall);
@@ -115,7 +115,7 @@ const Room = (props) => {
             otherUser: otherUser.current,
           };
           socketRef.current.emit("leave room", obj);
-          window.location.href = "https://crackit-hps.herokuapp.com/";
+          window.location.href = `https://localhost:3000/end/${props.match.params.roomID}`;
         });
 
         socketRef.current.on("room full", () => {});
@@ -309,21 +309,21 @@ const Room = (props) => {
 
   function shareScreen() {
     // let screenShareButton = document.querySelector(`.${style.btnShareScreen}`);
-    if (!peerJoined || (screenShareFlag)) return;
+    if (!peerJoined || screenShareFlag) return;
     navigator.mediaDevices.getDisplayMedia({ cursor: true }).then((stream) => {
       const screenTrack = stream.getTracks()[0];
 
       console.log("senders.current is: ", senders.current);
       setScreenShareFlag(true);
       screenShareFlagRef.current = true;
-      document.dispatchEvent(event.current);   // trigger 'screen share event for peer '
+      document.dispatchEvent(event.current); // trigger 'screen share event for peer '
       senders.current
         .find((sender) => sender.track.kind === "video")
         .replaceTrack(screenTrack);
       screenTrack.onended = function () {
         setScreenShareFlag(!true);
         screenShareFlagRef.current = !true;
-        document.dispatchEvent(event.current);  // trigger 'screen share event for peer '
+        document.dispatchEvent(event.current); // trigger 'screen share event for peer '
         senders.current
           .find((sender) => sender.track.kind === "video")
           .replaceTrack(userStream.current.getTracks()[1]);
