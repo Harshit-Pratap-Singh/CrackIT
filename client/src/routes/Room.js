@@ -64,8 +64,8 @@ const Room = (props) => {
     navigator.mediaDevices
       .getUserMedia({ audio: true, video: true })
       .then((stream) => {
-        userVideo.current.srcObject = stream;
         userStream.current = stream;
+        userVideo.current.srcObject = userStream.current;
 
         userStream.current.getTracks()[0].enabled = false;
 
@@ -352,8 +352,32 @@ const Room = (props) => {
   function hideCamera() {
     if (hideCameraFlag) {
       userStream.current.getTracks()[1].enabled = false;
+      userStream.current.getTracks()[1].stop();
+      console.log("track after stop--->", userStream.current.getTracks());
     } else {
-      userStream.current.getTracks()[1].enabled = true;
+      navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
+        if (peerJoined) {
+          console.log("streams-->", stream.getTracks());
+          console.log("sender-->", senders.current);
+          senders.current
+            .find((sender) => sender.track.kind === "video")
+            .replaceTrack(stream.getTracks()[0]);
+          // userVideo.current.srcObject = ;
+          let p = userStream.current.getTracks();
+          p[1] = stream.getTracks()[0];
+          userStream.current = new MediaStream(p);
+          userVideo.current.srcObject = userStream.current;
+          console.log(p);
+        } else {
+          let p = userStream.current.getTracks();
+          p[1] = stream.getTracks()[0];
+          userStream.current = new MediaStream(p);
+          userVideo.current.srcObject = userStream.current;
+          console.log(p);
+        }
+      });
+
+      // userStream.current.getTracks()[1].enabled = true;
     }
 
     setHideCameraFlag(!hideCameraFlag);
