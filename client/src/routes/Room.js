@@ -107,6 +107,11 @@ const Room = (props) => {
             peerRef.current = null;
           }
 
+          setPeerScreenShareFlag(false);
+          setPeerVideoFlag(false);
+
+          console.log("hdei--->", hideCameraFlagRef);
+
           setPeerJoined(false);
           console.log("user left called");
 
@@ -168,11 +173,15 @@ const Room = (props) => {
 
         // ////////////////////////////   new
         document.addEventListener("peer video", () => {
+          console.log(
+            "hideCameraFlagRef.current----->",
+            hideCameraFlagRef.current
+          );
           const payload = {
             target: otherUser.current,
             peerVideoFlag: hideCameraFlagRef.current,
           };
-          console.log("peerVideo-->", payload);
+          console.log("peerVideoPayLoad-->", payload);
 
           socketRef.current.emit("peer video status", payload);
         });
@@ -326,8 +335,16 @@ const Room = (props) => {
   function handleTrackEvent(e) {
     //add
     setPeerJoined(true);
+    // document.dispatchEvent(peerVideoEvent.current);
+    // console.log("peervideoflag--->", hideCameraFlagRef);
+
     //add
     partnerVideo.current.srcObject = e.streams[0];
+    // console.log(
+    //   "e.streams[0].getTracks()[0].enabled-->",
+    //   e.streams[0].getTracks()
+    // );
+    // setPeerVideoFlag(!e.streams[0].getTracks()[0].enabled);
   }
 
   function shareScreen() {
@@ -374,17 +391,15 @@ const Room = (props) => {
   }
 
   function hideCamera() {
-    hideCameraFlagRef.current = hideCameraFlag;
-    console.log("hideCameraFlagRef---->", hideCameraFlagRef.current);
-    document.dispatchEvent(peerVideoEvent.current);
-
     if (hideCameraFlag) {
       userStream.current.getTracks()[1].enabled = false;
+      hideCameraFlagRef.current = true;
     } else {
       userStream.current.getTracks()[1].enabled = true;
+      hideCameraFlagRef.current = !true;
     }
-
     setHideCameraFlag(!hideCameraFlag);
+    document.dispatchEvent(peerVideoEvent.current);
   }
 
   function mute() {
@@ -434,6 +449,14 @@ const Room = (props) => {
     }
   }, [messages]);
 
+  useEffect(() => {
+    if (peerJoined) {
+      hideCameraFlagRef.current = !hideCameraFlag;
+      document.dispatchEvent(peerVideoEvent.current);
+      console.log("ppppp->>>>", hideCameraFlagRef.current);
+    }
+  }, [peerJoined]);
+
   return (
     <div className={style.container}>
       <div style={{ position: "absolute", zIndex: "2" }}>
@@ -456,7 +479,7 @@ const Room = (props) => {
               }`}
             />
           )}
-          {peerVideoFlag && (
+          {peerVideoFlag && !peerScreenShareFlag && (
             <div className={`${style.noUserVideo} ${style.noPeerVideo}`}>
               <img
                 src={noUser}
