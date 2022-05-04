@@ -81,6 +81,13 @@ io.on("connection", (socket) => {
       .emit("sharescreen status", payload.screenShareFlag);
   });
 
+
+///////// NEW
+
+  socket.on('peer video status',(payload)=>{
+    socket.to(payload.target).emit('peer video status',payload.peerVideoFlag)
+  })
+
   socket.on("disconnect", () => {
     console.log("disconnect user id --->", socket.id);
     console.log("rooms--->", idRoomMap[socket.id]);

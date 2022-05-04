@@ -103,7 +103,26 @@
     border: none;
 }
 
+.noUserVideo{
+    background-color: #36393a9d;
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    position: relative;
+    z-index: 20;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
+.noUserVideoIcon{
+    width: 10rem;
+}
+.noPeerVideo{
+   position: absolute;
+   z-index: 1;
+   top: 0; 
+}
 
 .userVideo,.peerVideo{
     background-color: #000000;
@@ -133,8 +152,11 @@
     position: absolute;
     right: 10px;
     bottom: 10px;
+    background-color: #36393a;
 }
-
+.changeUserVideo>.noUserVideoIcon{
+    width: 5rem;
+}
 
 .footer{
     display: flex;

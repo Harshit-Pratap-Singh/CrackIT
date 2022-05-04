@@ -18,6 +18,7 @@ import ideIcon from "../assets/programming-code-signs.png";
 import ideIconWhite from "../assets/programming-code-signs-white.png";
 import closeIcon from "../assets/close.png";
 import sendIcon from "../assets/send-message.png";
+import noUser from "../assets/usercam.png";
 
 import Time from "../components/Time";
 import IdeMain from "../ide_components/IdeMain";
@@ -59,6 +60,11 @@ const Room = (props) => {
   const chatFlagRef = useRef();
   chatFlagRef.current = false;
   const [newMessageFlag, setNewMessageFlag] = useState(false);
+  const [peerVideoFlag, setPeerVideoFlag] = useState(false);
+  const hideCameraFlagRef = useRef();
+  hideCameraFlagRef.current = false;
+  const peerVideoEvent = useRef();
+  peerVideoEvent.current = new Event("peer video");
 
   useEffect(() => {
     navigator.mediaDevices
@@ -158,6 +164,23 @@ const Room = (props) => {
           // alert(data);
           setPeerScreenShareFlag(data);
           //* new
+        });
+
+        // ////////////////////////////   new
+        document.addEventListener("peer video", () => {
+          const payload = {
+            target: otherUser.current,
+            peerVideoFlag: hideCameraFlagRef.current,
+          };
+          console.log("peerVideo-->", payload);
+
+          socketRef.current.emit("peer video status", payload);
+        });
+
+        socketRef.current.on("peer video status", (data) => {
+          // console.log("data recived");
+          // alert(data);
+          setPeerVideoFlag(data);
         });
       });
   }, []);
@@ -316,6 +339,7 @@ const Room = (props) => {
       console.log("senders.current is: ", senders.current);
       setScreenShareFlag(true);
       screenShareFlagRef.current = true;
+
       document.dispatchEvent(event.current); // trigger 'screen share event for peer '
       senders.current
         .find((sender) => sender.track.kind === "video")
@@ -350,6 +374,10 @@ const Room = (props) => {
   }
 
   function hideCamera() {
+    hideCameraFlagRef.current = hideCameraFlag;
+    console.log("hideCameraFlagRef---->", hideCameraFlagRef.current);
+    document.dispatchEvent(peerVideoEvent.current);
+
     if (hideCameraFlag) {
       userStream.current.getTracks()[1].enabled = false;
     } else {
@@ -428,6 +456,15 @@ const Room = (props) => {
               }`}
             />
           )}
+          {peerVideoFlag && (
+            <div className={`${style.noUserVideo} ${style.noPeerVideo}`}>
+              <img
+                src={noUser}
+                alt="no user video"
+                className={style.noUserVideoIcon}
+              />
+            </div>
+          )}
           <video
             muted
             // controls
@@ -438,6 +475,19 @@ const Room = (props) => {
               peerJoined && style.changeUserVideo
             }`}
           />
+          {!hideCameraFlag && (
+            <div
+              className={`${style.noUserVideo} ${
+                peerJoined && style.changeUserVideo
+              }`}
+            >
+              <img
+                src={noUser}
+                alt="no user video"
+                className={style.noUserVideoIcon}
+              />
+            </div>
+          )}
         </div>
 
         <div className={`${style.messageContainer} ${chatFlag && style.enter}`}>
